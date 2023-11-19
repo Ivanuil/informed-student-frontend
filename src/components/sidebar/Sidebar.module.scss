@@ -1,0 +1,56 @@
+@import 'src/styles/variables';
+
+.container {
+    display: flex;
+    align-items: stretch;
+    min-height: 100vh;
+    height: 100%;
+}
+
+.sidebarContainer {
+    width: 30%;
+    max-width: 340px;
+    background-color: white;
+    padding: 14px;
+    // border: 1px solid $border--light--1;
+    
+    box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
+}
+
+.sidebarContainer .header {
+    all: unset;
+    font-size: 24px;
+    // font-weight: 200;
+}
+
+.sidebarContainer .divider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.sidebarContainer .controls {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    padding: 8px;
+    overflow: hidden;
+
+    :global {
+
+        .MuiButton-root {
+            text-transform: none;
+            background-color: $primary--1;
+            color: $text--on--light--3;
+        }
+    }
+}
+
+.mainContentContainer {
+    padding: 16px;
+    width: 100%;
+}
+
+.mainContentContainer .segmentLabel {
+    font-size: 18px;
+    font-weight: 500;
+}

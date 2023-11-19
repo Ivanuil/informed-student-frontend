@@ -1,0 +1,24 @@
+@import 'src/styles/variables';
+
+.container {
+  margin-top: 24px;
+
+  :global {
+
+    .MuiButton-root {
+      height: 40px;
+      text-transform: none;
+      background-color: $primary--2;
+      color: $text--on--light--2;
+
+      &:hover {
+        background-color: $primary--hover--1;
+      }
+    }
+  }
+}
+
+.container .controls {
+  display: flex;
+  column-gap: 10px;
+}

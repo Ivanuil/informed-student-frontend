@@ -1,0 +1,11 @@
+@import './styles/variables.scss';
+
+@import 'src/components/sidebar/Sidebar.module';
+
+.app {
+    min-height: 100vh;
+    height: 100%;
+    background-color: $bg--light--default;
+
+    color: $text--on--light--1;
+}
