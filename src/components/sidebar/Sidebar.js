@@ -4,22 +4,6 @@ import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from '../../services/axios';
 
-export const folderOptions = [
-    {
-
-        name: 'Контрольная работа',
-        id: 1
-    },
-    {
-        name: 'Конспекты семинаров',
-        id: 2
-    },
-    {
-        name: 'Литература',
-        id: 3
-    }
-];
-
 function Sidebar() {
 
     const navigate = useNavigate();
@@ -99,17 +83,10 @@ function Sidebar() {
 
     const onSubjectAdded = (subject) => {
         setSubjects([...subjects, subject]);
-        // setSubject(subject);
-        console.log("added subject: ", subject);
     }
 
     const onFolderAdded = (folder) => {
         setFolders([...folders, folder]);
-        console.log("added folder: ", folder);
-    }
-
-    const onPostAdded = (post) => {
-        console.log("added post: ", post);
     }
 
     return (<div className={classes.container}>
@@ -164,17 +141,10 @@ function Sidebar() {
         </div>
 
         <div className={classes.verticalDivider}/>
-
+        
         <div className={classes.mainContentContainer}>
-            {/*<Backdrop*/}
-            {/*    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}*/}
-            {/*    open={true}>*/}
-            {/*    <CircularProgress color="inherit" />*/}
-            {/*</Backdrop>*/}
-
             {getNavigationInfo()}
-
-            <Outlet context={{onSubjectAdded, onFolderAdded}} />
+            <Outlet context={{onSubjectAdded, onFolderAdded, folders}} />
         </div>
     </div>);
 }

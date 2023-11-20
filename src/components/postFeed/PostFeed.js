@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {useEffect, useState} from 'react';
 import styled from '@emotion/styled';
 import axios from '../../services/axios';
-import {useOutletContext, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import PostItem from './postItem/PostItem';
 
 const VisuallyHiddenInput = styled('input')({
@@ -22,9 +22,9 @@ const VisuallyHiddenInput = styled('input')({
 
 const defaultPageSize = 5;
 
-function PostFeed() {
+const maxFileUploadSize = 5;
 
-    const {onPostAdded} = useOutletContext();
+function PostFeed() {
 
     const { folderId } = useParams();
 
@@ -37,10 +37,11 @@ function PostFeed() {
     const [currentPage, setCurrentPage] = useState(null);
     const [numberOfPages, setNumberOfPages] = useState(null);
 
-    useEffect(() => {
+    const getPageOfPosts = () => {
         const params = {
             folderId,
-            size: defaultPageSize
+            size: defaultPageSize,
+            page: (currentPage ?? 1) - 1
         }
         axios.get('post/filterByFolder', { params })
             .then(response => {
@@ -52,7 +53,11 @@ function PostFeed() {
             .catch(error => {
                 console.log(error);
             });
-    }, [folderId]);
+    }
+
+    useEffect(() => {
+        getPageOfPosts();
+    }, [folderId, currentPage]);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -79,8 +84,9 @@ function PostFeed() {
         })
             .then(response => {
                 setSnackbarOpen(true);
-                setPosts([...posts, response.data]);
                 setPostText('');
+                setAttachedFile(null);
+                getPageOfPosts();
                 console.log(response);
             })
             .catch(error => {
@@ -88,15 +94,34 @@ function PostFeed() {
             });
     }
 
-    const handleSnackbarClose = (event, reason) => {
+    const handleSnackbarClose = (_event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
         setSnackbarOpen(false);
     };
 
-    const handlePageChange = (event, value) => {
+    const handlePageChange = (_event, value) => {
         setCurrentPage(value);
+    }
+
+    const isFileTooLarge = () => {
+        return attachedFile ? attachedFile.size > (maxFileUploadSize * 1024 * 1024) : false;
+    }
+
+    const getFileInfo = () => {
+        if (!attachedFile) return <div/>;
+
+        return (<div>
+            <div className={classes.fileName}>
+                {attachedFile.name}
+            </div>
+            {
+                isFileTooLarge() && <div className={classes.fileTooLarge}>
+                    Максимальный размер файла - {maxFileUploadSize} МБ
+                </div>
+            }
+        </div>);
     }
 
     return (<div className={classes.container}>
@@ -104,7 +129,7 @@ function PostFeed() {
         <div className={classes.posts}>
             <div className={classes.addPost}>
             <textarea rows={3} className={classes.textArea}
-                      placeholder='Напишите что-нибудь'
+                      placeholder='Напишите новый пост'
                       value={postText}
                       onChange={(e) => setPostText(e.target.value)}>
             </textarea>
@@ -112,19 +137,20 @@ function PostFeed() {
                 <Divider style={{margin: '8px 0'}} />
 
                 <div className={classes.controls}>
+                    {getFileInfo()}
 
-                    <span className={classes.fileName}>{attachedFile?.name}</span>
                     <div className={classes.buttons}>
 
                         <IconButton component="label">
-                            <AttachFileIcon />
+                            <AttachFileIcon style={{transform: 'rotate(30deg)'}}/>
                             <VisuallyHiddenInput type="file"
                                                  accept="image/png, image/jpeg, application/pdf"
                                                  onChange={handleFileChange} />
                         </IconButton>
 
                         <Button variant="contained"
-                                onClick={addPost}>
+                                onClick={addPost}
+                                disabled={isFileTooLarge() || !postText}>
                             Добавить
                         </Button>
                     </div>
@@ -132,13 +158,15 @@ function PostFeed() {
             </div>
             {posts && posts.map(p => <PostItem post={p} />)}
         </div>
-
-        <div className={classes.pagination}>
-            <Pagination count={numberOfPages}
-                        page={currentPage}
-                        onChange={handlePageChange}
-                        size="large" />
-        </div>
+        {
+            numberOfPages > 0 &&
+            <div className={classes.pagination}>
+                <Pagination count={numberOfPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    size="large" />
+            </div>
+        }
 
         <Snackbar
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -153,7 +181,6 @@ function PostFeed() {
                 onClick={handleSnackbarClose}>
                 <CloseIcon fontSize="small" />
             </IconButton>}>
-
         </Snackbar>
     </div>);
 }

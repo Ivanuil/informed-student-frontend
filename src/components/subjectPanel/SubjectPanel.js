@@ -13,6 +13,7 @@ function SubjectPanel() {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const {onSubjectAdded} = useOutletContext();
+    const [message, setMessage] = useState('');
 
     const addSubject = () => {
         const subjectCreateRequest = {
@@ -23,6 +24,7 @@ function SubjectPanel() {
         axios.post('subject', subjectCreateRequest)
         .then(response => {
             onSubjectAdded(response.data);
+            setMessage("Предмет добавлен");
             setSnackbarOpen(true);
         })
         .catch(error => {
@@ -56,7 +58,7 @@ function SubjectPanel() {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             open={snackbarOpen}
             autoHideDuration={4000}
-            message="Предмет добавлен"
+            message={message}
             onClose={handleSnackbarClose}
             action={<IconButton
                 size="small"

@@ -10,17 +10,17 @@ function FolderPanel() {
 
     const { subjectId } = useParams();
 
-    const {onFolderAdded} = useOutletContext();
+    const {onFolderAdded, folders} = useOutletContext();
 
     const [folderOptions, setFolderOptions] = useState([]);
     const [folder, setFolder] = useState('');
 
+    const [message, setMessage] = useState('');
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     useEffect(() => {
         axios.get('folder/types')
             .then(response => {
-                console.log(response.data);
                 setFolderOptions(response.data);
             })
             .catch(error => {
@@ -29,14 +29,22 @@ function FolderPanel() {
     }, []);
 
     const addFolder = () => {
+        const typeToAdd = JSON.parse(folder).type;
+        if (folders && folders.some(f => f.type.type === typeToAdd)) {
+            setMessage("Такая секция уже существует");
+            setSnackbarOpen(true);
+            return;
+        }
+
         const folderCreateRequest = {
             subjectId,
-            type: JSON.parse(folder).type
+            type: typeToAdd
         };
         
         axios.post('folder', folderCreateRequest)
             .then(response => {
                 onFolderAdded(response.data);
+                setMessage("Секция добавлена");
                 setSnackbarOpen(true);
             })
             .catch(error => {
@@ -75,7 +83,7 @@ function FolderPanel() {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             open={snackbarOpen}
             autoHideDuration={4000}
-            message="Секция добавлена"
+            message={message}
             onClose={handleSnackbarClose}
             action={<IconButton
                 size="small"

@@ -2,13 +2,13 @@
 
 .container {
     display: flex;
-    box-sizing: border-box;
     align-items: start;
+    box-sizing: border-box;
     width: 62%;
     column-gap: 16px;
     margin: 0 auto;
     padding-top: 16px;
-    min-height: 100vh;
+    height: 100%;
 }
 
 .sidebarContainer {
@@ -17,21 +17,18 @@
     background-color: white;
     padding: 16px 16px 22px;
     border-radius: $border--radius--1;
-    // border: 1px solid $border--light--1;
 
     box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
 }
 
 .container .verticalDivider {
-    height: 252px;
-    align-self: stretch;
+    height: 258px;
     border-inline-start: 1px solid $border--light--1;
 }
 
 .sidebarContainer .header {
     all: unset;
     font-size: 24px;
-    // font-weight: 200;
 }
 
 .sidebarContainer .divider {
@@ -64,7 +61,9 @@
 
 .mainContentContainer {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .mainContentContainer .segmentLabel {

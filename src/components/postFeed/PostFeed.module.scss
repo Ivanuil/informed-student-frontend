@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 90vh;
+  flex: 1 0 auto;
 }
 
 .container .posts {
@@ -35,7 +35,7 @@
 }
 
 .container .pagination {
-  margin-top: 16px;
+  margin: 16px 0;
   align-self: center;
 }
 
@@ -48,6 +48,10 @@
   resize: none;
   width: 100%;
   font-family: inherit;
+
+  &::placeholder {
+    color: $text--on--light--5;
+  }
 }
 
 .addPost .controls {
@@ -64,4 +68,8 @@
   display: inline-flex;
   align-items: center;
   overflow: hidden;
+}
+
+.controls .fileTooLarge {
+  color: $error--1;
 }
