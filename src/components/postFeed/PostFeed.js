@@ -1,11 +1,11 @@
-import {Button, Divider, IconButton, Snackbar} from '@mui/material';
+import {Button, Divider, IconButton, Pagination, Snackbar} from '@mui/material';
 import classes from './PostFeed.module.scss';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
 import {useEffect, useState} from 'react';
 import styled from '@emotion/styled';
 import axios from '../../services/axios';
-import {useParams} from 'react-router-dom';
+import {useOutletContext, useParams} from 'react-router-dom';
 import PostItem from './postItem/PostItem';
 
 const VisuallyHiddenInput = styled('input')({
@@ -18,9 +18,13 @@ const VisuallyHiddenInput = styled('input')({
     left: 0,
     whiteSpace: 'nowrap',
     width: 1,
-  });
+});
+
+const defaultPageSize = 5;
 
 function PostFeed() {
+
+    const {onPostAdded} = useOutletContext();
 
     const { folderId } = useParams();
 
@@ -30,16 +34,20 @@ function PostFeed() {
 
     const [posts, setPosts] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(null);
+    const [numberOfPages, setNumberOfPages] = useState(null);
 
     useEffect(() => {
         const params = {
-            folderId
+            folderId,
+            size: defaultPageSize
         }
-
         axios.get('post/filterByFolder', { params })
             .then(response => {
+                const pagedResult = response.data;
+                setPosts(pagedResult.content);
+                setNumberOfPages(pagedResult.totalPages);
                 console.log(response.data);
-                setPosts(response.data.content);
             })
             .catch(error => {
                 console.log(error);
@@ -64,15 +72,15 @@ function PostFeed() {
         if (attachedFile) {
             formData.append("files", attachedFile);
         }
-
         axios.post('post', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         })
             .then(response => {
-
                 setSnackbarOpen(true);
+                setPosts([...posts, response.data]);
+                setPostText('');
                 console.log(response);
             })
             .catch(error => {
@@ -87,43 +95,50 @@ function PostFeed() {
         setSnackbarOpen(false);
     };
 
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    }
+
     return (<div className={classes.container}>
         
-        <div className={classes.addPost}>
+        <div className={classes.posts}>
+            <div className={classes.addPost}>
             <textarea rows={3} className={classes.textArea}
-                placeholder='Напишите что-нибудь'
-                value={postText}
-                onChange={(e) => setPostText(e.target.value)}>
+                      placeholder='Напишите что-нибудь'
+                      value={postText}
+                      onChange={(e) => setPostText(e.target.value)}>
             </textarea>
 
-            <Divider style={{margin: '8px 0'}} />
+                <Divider style={{margin: '8px 0'}} />
 
-            <div className={classes.controls}>
-                
-                <span className={classes.fileName}>{attachedFile?.name}</span>
+                <div className={classes.controls}>
 
-                <div className={classes.buttons}>
+                    <span className={classes.fileName}>{attachedFile?.name}</span>
+                    <div className={classes.buttons}>
 
-                    <IconButton component="label">
-                        <AttachFileIcon />
-                        <VisuallyHiddenInput type="file"
-                            accept="image/png, image/jpeg, application/pdf"
-                            onChange={handleFileChange} />
-                    </IconButton>
+                        <IconButton component="label">
+                            <AttachFileIcon />
+                            <VisuallyHiddenInput type="file"
+                                                 accept="image/png, image/jpeg, application/pdf"
+                                                 onChange={handleFileChange} />
+                        </IconButton>
 
-                    <Button variant="contained"
-                        onClick={addPost}>
-                        Добавить
-                    </Button>
+                        <Button variant="contained"
+                                onClick={addPost}>
+                            Добавить
+                        </Button>
+                    </div>
                 </div>
-                
-
             </div>
+            {posts && posts.map(p => <PostItem post={p} />)}
         </div>
 
-        {
-            posts && posts.map(p => <PostItem post={p} />)
-        }
+        <div className={classes.pagination}>
+            <Pagination count={numberOfPages}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                        size="large" />
+        </div>
 
         <Snackbar
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

@@ -108,6 +108,10 @@ function Sidebar() {
         console.log("added folder: ", folder);
     }
 
+    const onPostAdded = (post) => {
+        console.log("added post: ", post);
+    }
+
     return (<div className={classes.container}>
 
         <div className={classes.sidebarContainer}>

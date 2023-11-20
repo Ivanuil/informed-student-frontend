@@ -3,10 +3,17 @@
 .container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  min-height: 90vh;
+}
+
+.container .posts {
+  display: flex;
+  flex-direction: column;
   row-gap: 16px;
 }
 
-.container .addPost {
+.posts .addPost {
 
   padding: 12px;
   background-color: $bg--light--2;
@@ -25,6 +32,11 @@
       }
     }
   }
+}
+
+.container .pagination {
+  margin-top: 16px;
+  align-self: center;
 }
 
 .addPost .textArea {

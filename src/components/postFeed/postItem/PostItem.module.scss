@@ -4,10 +4,12 @@
     box-sizing: border-box;
     padding: 12px;
     width: 100%;
-    height: 100px;
+    min-height: 100px;
     background-color: $bg--light--2;
     border-radius: $border--radius--1;
     border: 1px solid $border--light--1;
+
+    word-break: break-all;
 }
 
 .container .text {
