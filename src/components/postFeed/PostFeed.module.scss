@@ -1,0 +1,55 @@
+@import 'src/styles/variables';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.container .addPost {
+
+  padding: 12px;
+  background-color: $bg--light--2;
+  border-radius: $border--radius--1;
+  border: 1px solid $border--light--1;
+
+  :global {
+    .MuiButton-root {
+      height: 40px;
+      text-transform: none;
+      background-color: $secondary--1;
+      color: $text--on--dark--1;
+
+      &:hover {
+        background-color: $secondary--hover--1;
+      }
+    }
+  }
+}
+
+.addPost .textArea {
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  color: $text--on--light--4;
+  font-size: 18px;
+  resize: none;
+  width: 100%;
+  font-family: inherit;
+}
+
+.addPost .controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls .buttons {
+  display: flex;
+  column-gap: 4px;
+}
+
+.controls .fileName {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+}

@@ -2,19 +2,27 @@
 
 .container {
     display: flex;
-    align-items: stretch;
-    min-height: 100vh;
-    height: 100%;
+    align-items: start;
+    width: 62%;
+    column-gap: 16px;
+    margin: 0 auto;
+    padding-top: 16px;
 }
 
 .sidebarContainer {
-    width: 30%;
-    max-width: 340px;
+    width: 45%;
+    max-width: 220px;
     background-color: white;
-    padding: 14px;
+    padding: 16px 16px 22px;
+    border-radius: $border--radius--1;
     // border: 1px solid $border--light--1;
-    
+
     box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
+}
+
+.container .verticalDivider {
+    align-self: stretch;
+    border-inline-start: 1px solid $border--light--1;
 }
 
 .sidebarContainer .header {
@@ -32,11 +40,9 @@
     display: flex;
     flex-direction: column;
     row-gap: 16px;
-    padding: 8px;
     overflow: hidden;
 
     :global {
-
         .MuiButton-root {
             text-transform: none;
             background-color: $primary--1;
@@ -45,8 +51,15 @@
     }
 }
 
+.noOptions {
+    color: rgba(0, 0, 0, 0.6);
+    padding: 14px 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+    user-select: none;
+}
+
 .mainContentContainer {
-    padding: 16px;
     width: 100%;
 }
 

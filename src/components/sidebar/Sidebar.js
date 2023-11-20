@@ -1,17 +1,8 @@
-import {
-    Autocomplete, Backdrop,
-    Breadcrumbs, CircularProgress,
-    Divider,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    TextField
-} from '@mui/material';
+import {Autocomplete, Breadcrumbs, Divider, FormControl, InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import classes from './Sidebar.module.scss';
-import { subjectData } from './subjectsData';
 import {Outlet, useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
+import axios from '../../services/axios';
 
 export const folderOptions = [
     {
@@ -33,11 +24,10 @@ function Sidebar() {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const urlSplit = location.pathname?.split('/');
 
     const courseOptions = Array.from(Array(6), (e, i) => i + 1);
-    const [subjects, setSubjects] = useState(subjectData);
-    const [folders, setFolders] = useState(folderOptions);
+    const [subjects, setSubjects] = useState([]);
+    const [folders, setFolders] = useState([]);
 
     const [course, setCourse] = useState('');
     const [subject, setSubject] = useState('');
@@ -51,11 +41,27 @@ function Sidebar() {
     }, [course, subject, folder]);
 
     useEffect(() => {
+        if (!course) return;
         setSubject('');
+        axios.get('subject/filterByCourse', { params: { course } })
+            .then(response => {
+                setSubjects(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }, [course]);
 
     useEffect(() => {
+        if (!subject) return;
         setFolder('');
+        axios.get('folder/filterBySubject', { params: { subjectId: subject.id } })
+            .then(response => {
+                setFolders(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }, [subject]);
 
     function getUrlByFilters() {
@@ -71,25 +77,41 @@ function Sidebar() {
         return url;
     }
 
-    const getAllBreadcrumbs = () => {
+    const getNavigationInfo = () => {
         const breadcrumbs = [];
         if (course) {
             breadcrumbs.push(`Курс ${course}`);
         }
         if (course && subject) {
-            breadcrumbs.push(subject.label);
+            breadcrumbs.push(subject.name);
         }
         if (course && subject && folder) {
             const folderObject = JSON.parse(folder);
-            breadcrumbs.push(folderObject.name);
+            breadcrumbs.push(folderObject.type.displayName);
         }
-        return breadcrumbs.map(t => <span key={`navigation_${t}`}
-                                          className={classes.segmentLabel}>{t}</span>);
+        if (breadcrumbs.length === 0) return null;
+
+        return <Breadcrumbs aria-label="breadcrumb" style={{marginBottom: '14px'}}>
+                {breadcrumbs.map(t => <span key={`navigation_${t}`}
+                                            className={classes.segmentLabel}>{t}</span>)}
+            </Breadcrumbs>;
+    }
+
+    const onSubjectAdded = (subject) => {
+        setSubjects([...subjects, subject]);
+        // setSubject(subject);
+        console.log("added subject: ", subject);
+    }
+
+    const onFolderAdded = (folder) => {
+        setFolders([...folders, folder]);
+        console.log("added folder: ", folder);
     }
 
     return (<div className={classes.container}>
 
         <div className={classes.sidebarContainer}>
+
             <h3 className={classes.header}>Фильтры</h3>
             <Divider className={classes.divider}/>
 
@@ -112,27 +134,32 @@ function Sidebar() {
                     disableClearable
                     value={subject}
                     disabled={!course}
-                    onChange={(event, newValue) =>
-                        setSubject(newValue)}
+                    getOptionLabel={option => option.name ?? option}
+                    noOptionsText='Нет предметов'
+                    onChange={(_event, newValue) => setSubject(newValue)}
                     renderInput={(params) =>
-                        <TextField {...params} variant='standard' label="Предмет"/>}
+                        <TextField {...params} variant='standard' label="Предмет" />}
                 />
 
                 <FormControl variant='standard' size='small'>
                     <InputLabel>Секция</InputLabel>
                     <Select label="Folder"
-                            disabled={!subject}
-                            value={folder}
-                            onChange={e => setFolder(e.target.value)}>
+                        disabled={!subject}
+                        value={folder}
+                        onChange={e => setFolder(e.target.value)}>
 
-                        {folders.map(o =>
-                            <MenuItem key={`actualFolder_${JSON.stringify(o)}`}
-                                      value={JSON.stringify(o)}>{o.name}</MenuItem>)}
+                        {
+                            folders.length > 0 ? folders.map(f =>
+                                <MenuItem key={`actualFolder_${f.type.type}`}
+                                    value={JSON.stringify(f)}>{f.type.displayName}</MenuItem>) :
+                                <div className={classes.noOptions}>Нет секций</div>
+                        }
                     </Select>
                 </FormControl>
             </div>
         </div>
 
+        <div className={classes.verticalDivider}/>
 
         <div className={classes.mainContentContainer}>
             {/*<Backdrop*/}
@@ -141,11 +168,9 @@ function Sidebar() {
             {/*    <CircularProgress color="inherit" />*/}
             {/*</Backdrop>*/}
 
-            <Breadcrumbs aria-label="breadcrumb">
-                {getAllBreadcrumbs()}
-            </Breadcrumbs>
+            {getNavigationInfo()}
 
-            <Outlet context={[subjects, setSubjects]} />
+            <Outlet context={{onSubjectAdded, onFolderAdded}} />
         </div>
     </div>);
 }

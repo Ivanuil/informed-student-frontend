@@ -1,10 +1,7 @@
 @import 'src/styles/variables';
 
 .container {
-  margin-top: 24px;
-
   :global {
-
     .MuiButton-root {
       height: 40px;
       text-transform: none;

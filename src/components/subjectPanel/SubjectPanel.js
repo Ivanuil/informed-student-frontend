@@ -1,24 +1,33 @@
 import classes from './SubjectPanel.module.scss';
 import {Button, IconButton, Snackbar, TextField} from "@mui/material";
-import { useOutletContext } from "react-router-dom";
+import {useOutletContext, useParams} from "react-router-dom";
 import {useState} from "react";
 import CloseIcon from '@mui/icons-material/Close';
+import axios from '../../services/axios';
 
 function SubjectPanel() {
+
+    const { course } = useParams();
 
     const [subjectName, setSubjectName] = useState('');
     const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-    const [subjects, setSubjects] = useOutletContext();
+    const {onSubjectAdded} = useOutletContext();
 
     const addSubject = () => {
-        const newSubject = {
-            id: Math.floor(Math.random() * 1000),
-            label: subjectName
+        const subjectCreateRequest = {
+            name: subjectName,
+            course
         };
-        setSubjects([...subjects, newSubject]);
-        setSubjectName('');
-        setSnackbarOpen(true);
+        
+        axios.post('subject', subjectCreateRequest)
+        .then(response => {
+            onSubjectAdded(response.data);
+            setSnackbarOpen(true);
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     const handleSnackbarClose = (event, reason) => {
