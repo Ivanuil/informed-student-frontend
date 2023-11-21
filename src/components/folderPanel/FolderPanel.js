@@ -44,6 +44,7 @@ function FolderPanel() {
         axios.post('folder', folderCreateRequest)
             .then(response => {
                 onFolderAdded(response.data);
+                setFolder('');
                 setMessage("Секция добавлена");
                 setSnackbarOpen(true);
             })
@@ -62,7 +63,7 @@ function FolderPanel() {
     return (<div className={classes.container}>
 
         <div className={classes.controls}>
-            <FormControl sx={{ m: 1, minWidth: 225, margin: 0 }} size='small'>
+            <FormControl style={{flex: '0 0 50%'}} size='small'>
                 <InputLabel>Секция</InputLabel>
                 <Select label="Folder"
                     value={folder}

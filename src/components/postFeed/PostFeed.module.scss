@@ -31,6 +31,13 @@
         background-color: $secondary--hover--1;
       }
     }
+    .MuiButton-root.Mui-disabled {
+      pointer-events: none;
+      cursor: default;
+      color: rgba(14, 14, 14, 0.3);
+      box-shadow: none;
+      background-color: rgba(15, 34, 161, 0.2);
+    }
   }
 }
 

@@ -24,6 +24,7 @@ function SubjectPanel() {
         axios.post('subject', subjectCreateRequest)
         .then(response => {
             onSubjectAdded(response.data);
+            setSubjectName('');
             setMessage("Предмет добавлен");
             setSnackbarOpen(true);
         })
@@ -43,6 +44,7 @@ function SubjectPanel() {
 
         <div className={classes.controls}>
             <TextField
+                style={{flex: '0 0 50%'}}
                 helperText="Добавить новый предмет"
                 required
                 label="Предмет"
@@ -51,7 +53,11 @@ function SubjectPanel() {
                 onChange={e => setSubjectName(e.target.value)}
             />
 
-            <Button variant="contained" onClick={addSubject}>Добавить</Button>
+            <Button variant="contained"
+                    onClick={addSubject}
+                    disabled={!subjectName}>
+                Добавить
+            </Button>
         </div>
 
         <Snackbar
