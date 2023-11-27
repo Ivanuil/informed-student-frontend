@@ -1,13 +1,12 @@
 import {Autocomplete, Breadcrumbs, Divider, FormControl, InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import classes from './Sidebar.module.scss';
-import {Outlet, useLocation, useNavigate} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from '../../services/axios';
 
 function Sidebar() {
 
     const navigate = useNavigate();
-    const location = useLocation();
 
     const courseOptions = Array.from(Array(6), (e, i) => i + 1);
     const [subjects, setSubjects] = useState([]);

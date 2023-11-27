@@ -20,9 +20,9 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-const defaultPageSize = 5;
+const DEFAULT_PAGE_SIZE = 5;
 
-const maxFileUploadSize = 5;
+const MAX_FILE_UPLOAD_SIZE = 5;
 
 function PostFeed() {
 
@@ -34,14 +34,14 @@ function PostFeed() {
 
     const [posts, setPosts] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
     const [numberOfPages, setNumberOfPages] = useState(null);
 
     const getPageOfPosts = () => {
         const params = {
             folderId,
-            size: defaultPageSize,
-            page: (currentPage ?? 1) - 1
+            size: DEFAULT_PAGE_SIZE,
+            page: currentPage - 1
         }
         axios.get('post/filterByFolder', { params })
             .then(response => {
@@ -82,12 +82,11 @@ function PostFeed() {
                 'Content-Type': 'multipart/form-data'
             }
         })
-            .then(response => {
+            .then(_response => {
                 setSnackbarOpen(true);
                 setPostText('');
                 setAttachedFile(null);
                 getPageOfPosts();
-                console.log(response);
             })
             .catch(error => {
                 console.log(error);
@@ -106,7 +105,7 @@ function PostFeed() {
     }
 
     const isFileTooLarge = () => {
-        return attachedFile ? attachedFile.size > (maxFileUploadSize * 1024 * 1024) : false;
+        return attachedFile ? attachedFile.size > (MAX_FILE_UPLOAD_SIZE * 1024 * 1024) : false;
     }
 
     const getFileInfo = () => {
@@ -118,7 +117,7 @@ function PostFeed() {
             </div>
             {
                 isFileTooLarge() && <div className={classes.fileTooLarge}>
-                    Максимальный размер файла - {maxFileUploadSize} МБ
+                    Максимальный размер файла - {MAX_FILE_UPLOAD_SIZE} МБ
                 </div>
             }
         </div>);

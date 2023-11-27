@@ -53,34 +53,44 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
     padding: '8px 8px 0',
 }));
 
+const DEFAULT_PAGE_SIZE = 5;
+
 function PostItem({post}) {
 
     const [commentText, setCommentText] = useState('');
+
     const [comments, setComments] = useState([]);
+    const [totalItems, setTotalItems] = useState(null);
 
     const [commentsExpanded, setCommentsExpanded] = useState(false);
 
     useEffect(() => {
         if (commentsExpanded) {
-            getAllPostComments();
+            loadCommentsPage(0)
+                .then(payload => {
+                    setComments(payload.content);
+                });
         }
     }, [post, commentsExpanded]);
 
-    const getAllPostComments = () => {
-        axios.get('comment/filterByPost', { params: { postId: post.id } })
+    const loadCommentsPage = (page, size = DEFAULT_PAGE_SIZE) => {
+        return axios.get('comment/filterByPost', { params: { postId: post.id, page, size } })
             .then(response => {
-                setComments(response.data);
+                const payload = response.data;
+                setTotalItems(payload.totalSize);
+                return payload;
             })
             .catch(error => {
                 console.log(error);
-            })
+                return error;
+            });
     }
 
     const getAttachedFile = () => {
         if (!post.files || !post.files.length) return null;
         
         const fileObj = post.files[0];
-        const fileUrl = `http://localhost:8080/files?filename=${fileObj.savedByName}`;
+        const fileUrl = `${process.env.REACT_APP_BASEURL}/files?filename=${fileObj.savedByName}`;
         
         if (isImageExtension(fileObj.originalName)) {
             return <img width={'100%'} src={fileUrl} alt='Attached image'></img>;
@@ -96,7 +106,8 @@ function PostItem({post}) {
         axios.post('comment', commentObject)
             .then(response => {
                 setCommentText('');
-                setComments([...comments, response.data]);
+                setComments([response.data, ...comments]);
+                setTotalItems(prevSize => prevSize + 1);
             })
             .catch(error => {
                 console.log(error);
@@ -119,6 +130,36 @@ function PostItem({post}) {
         });
     }
 
+    const getOldCommentsWithoutIntersecting = (newPage) => {
+        const commentsCopy = [...comments];
+        newPage.forEach(el => {
+            const indexInOldArray = commentsCopy.findIndex(c => c.id === el.id);
+            if (indexInOldArray && indexInOldArray > 0) {
+                commentsCopy.splice(indexInOldArray, 1);
+            }
+        });
+        return commentsCopy;
+    }
+
+    const onShowMoreClick = (e) => {
+        e.preventDefault();
+        if (comments.length < totalItems) {
+            const nextPage = Math.floor(comments.length / DEFAULT_PAGE_SIZE);
+            loadCommentsPage(nextPage)
+                .then(payload => {
+                    const anotherPage = payload.content;
+                    setComments([...getOldCommentsWithoutIntersecting(anotherPage), ...anotherPage]);
+                });
+        }
+    }
+
+    const getShowMoreButton = () => {
+        if (totalItems !== null && comments.length < totalItems) {
+            return (<a href='#' onClick={onShowMoreClick}>Показать больше</a>);
+        }
+        return null;
+    }
+
     return (<div key={`post${post.id}`} className={classes.container}>
 
         <div className={classes.text} style={{marginBottom: '10px'}}>
@@ -137,6 +178,7 @@ function PostItem({post}) {
             <AccordionDetails>
                 <div>
                     {getAllCommentElements()}
+                    {getShowMoreButton()}
 
                     <div className={classes.addCommentSection}>
                         <textarea
