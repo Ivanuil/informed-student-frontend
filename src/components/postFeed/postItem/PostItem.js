@@ -121,9 +121,13 @@ function PostItem({post}) {
                 ' ' + timestamp.toLocaleTimeString(); 
 
             return <div className={classes.comment}>
-                <div>{c.text}</div>
-                <div className={classes.createdAt}>
-                    {formattedTime}
+                <div style={{marginBottom: '6px'}}>{c.user.username}</div>
+                
+                <div style={{marginLeft: '8px'}}>
+                    <div>{c.text}</div>
+                    <div className={classes.createdAt}>
+                        {formattedTime}
+                    </div>
                 </div>
                 <Divider style={{marginTop: '4px'}}/>
             </div>
@@ -162,6 +166,9 @@ function PostItem({post}) {
 
     return (<div key={`post${post.id}`} className={classes.container}>
 
+        <div className={classes.username} style={{ marginBottom: '8px' }}>
+            {post.user.username}
+        </div>
         <div className={classes.text} style={{marginBottom: '10px'}}>
             {post.text}
         </div>

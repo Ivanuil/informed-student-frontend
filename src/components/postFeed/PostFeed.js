@@ -1,4 +1,4 @@
-import {Button, Divider, IconButton, Pagination, Snackbar} from '@mui/material';
+import {Divider, IconButton, Pagination, Snackbar} from '@mui/material';
 import classes from './PostFeed.module.scss';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import axios from '../../services/axios';
 import {useParams} from 'react-router-dom';
 import PostItem from './postItem/PostItem';
+import AppButton from '../ui/AppButton';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -147,11 +148,12 @@ function PostFeed() {
                                                  onChange={handleFileChange} />
                         </IconButton>
 
-                        <Button variant="contained"
+                        <AppButton 
+                                appVariant="secondary"
                                 onClick={addPost}
                                 disabled={isFileTooLarge() || !postText}>
                             Добавить
-                        </Button>
+                        </AppButton>
                     </div>
                 </div>
             </div>

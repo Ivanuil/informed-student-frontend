@@ -9,6 +9,10 @@ import FolderPanel from "./components/folderPanel/FolderPanel";
 import NotFound from "./components/errorPages/NotFound";
 import PostFeed from "./components/postFeed/PostFeed";
 import InitialPanel from "./components/sidebar/InitialPanel";
+import SignInForm from './components/signIn/SignInForm';
+import MainPage from './components/sidebar/MainPage';
+import SignUpForm from './components/signUp/SignUpForm';
+import ProtectedRoute from './services/protectedRoute';
 
 
 const router = createBrowserRouter([
@@ -18,21 +22,35 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        index: true,
-        element: <InitialPanel />
+        path: "main",
+        element: <ProtectedRoute><MainPage /></ProtectedRoute>,
+        children: [
+          {
+            index: true,
+            element: <InitialPanel />
+          },
+          {
+            path: "courses/:course",
+            element: <SubjectPanel />
+          },
+          {
+            path: "courses/:course/subjects/:subjectId",
+            element: <FolderPanel />
+          },
+          {
+            path: "courses/:course/subjects/:subjectId/folders/:folderId",
+            element: <PostFeed />
+          }
+        ]
       },
       {
-        path: "courses/:course",
-        element: <SubjectPanel />
+        path: "login",
+        element: <SignInForm />
       },
       {
-        path: "courses/:course/subjects/:subjectId",
-        element: <FolderPanel />
+        path: "signup",
+        element: <SignUpForm />
       },
-      {
-        path: "courses/:course/subjects/:subjectId/folders/:folderId",
-        element: <PostFeed />
-      }
     ]
   }
 ]);

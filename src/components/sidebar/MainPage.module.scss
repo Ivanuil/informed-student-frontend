@@ -1,13 +1,24 @@
 @import 'src/styles/variables';
 
-.container {
+.pageContainer .header {
+    padding: 10px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    height: 52px;
+    box-sizing: border-box;
+    background-color: $bg--light--2;
+    border-bottom: 1px solid $border--light--1;
+}
+
+.contentContainer {
     display: flex;
     align-items: start;
     box-sizing: border-box;
     width: 64%;
     column-gap: 16px;
     margin: 0 auto;
-    padding-top: 30px;
+    padding-top: 18px;
     height: 100%;
 }
 
@@ -21,7 +32,7 @@
     box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
 }
 
-.container .verticalDivider {
+.contentContainer .verticalDivider {
     height: 258px;
     border-inline-start: 1px solid $border--light--1;
 }
@@ -41,14 +52,6 @@
     flex-direction: column;
     row-gap: 16px;
     overflow: hidden;
-
-    :global {
-        .MuiButton-root {
-            text-transform: none;
-            background-color: $primary--1;
-            color: $text--on--light--3;
-        }
-    }
 }
 
 .noOptions {
@@ -72,13 +75,13 @@
 }
 
 @media screen and (min-width: 1400px) {
-    .container {
+    .contentContainer {
         width: 54%;
     }
 }
 
 @media screen and (max-width: 900px) {
-    .container {
+    .contentContainer {
         width: 95%;
     }
 }

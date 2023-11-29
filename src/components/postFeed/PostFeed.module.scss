@@ -19,26 +19,6 @@
   background-color: $bg--light--2;
   border-radius: $border--radius--1;
   border: 1px solid $border--light--1;
-
-  :global {
-    .MuiButton-root {
-      height: 40px;
-      text-transform: none;
-      background-color: $secondary--1;
-      color: $text--on--dark--1;
-
-      &:hover {
-        background-color: $secondary--hover--1;
-      }
-    }
-    .MuiButton-root.Mui-disabled {
-      pointer-events: none;
-      cursor: default;
-      color: rgba(14, 14, 14, 0.3);
-      box-shadow: none;
-      background-color: rgba(15, 34, 161, 0.2);
-    }
-  }
 }
 
 .container .pagination {

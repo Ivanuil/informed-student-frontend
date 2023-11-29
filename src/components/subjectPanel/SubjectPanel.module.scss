@@ -1,28 +1,5 @@
 @import 'src/styles/variables';
 
-.container {
-  :global {
-    .MuiButton-root {
-      height: 40px;
-      text-transform: none;
-      background-color: $primary--2;
-      color: $text--on--light--2;
-
-      &:hover {
-        background-color: $primary--hover--1;
-      }
-    }
-
-    .MuiButton-root.Mui-disabled {
-      pointer-events: none;
-      cursor: default;
-      color: rgba(35, 2, 2, 0.3);
-      box-shadow: none;
-      background-color: rgba(161, 15, 15, 0.20);
-    }
-  }
-}
-
 .container .controls {
   display: flex;
   column-gap: 10px;

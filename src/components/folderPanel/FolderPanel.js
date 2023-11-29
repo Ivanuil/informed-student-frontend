@@ -1,12 +1,16 @@
 import classes from './FolderPanel.module.scss';
-import {Button, FormControl, IconButton, InputLabel, MenuItem, Select, Snackbar} from "@mui/material";
+import {FormControl, IconButton, InputLabel, MenuItem, Select, Snackbar} from "@mui/material";
 import FormHelperText from '@mui/material/FormHelperText';
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import axios from '../../services/axios';
 import CloseIcon from '@mui/icons-material/Close';
 import {useOutletContext, useParams} from 'react-router-dom';
+import AppButton from '../ui/AppButton';
+import {AppContext} from "../../App";
 
 function FolderPanel() {
+
+    const user = useContext(AppContext);
 
     const { subjectId } = useParams();
 
@@ -60,25 +64,33 @@ function FolderPanel() {
         setSnackbarOpen(false);
     };
 
+    const getControls = () => {
+        if (user && user.roles.indexOf('MODERATOR') !== -1) {
+            return (<div className={classes.controls}>
+                <FormControl style={{flex: '0 0 50%'}} size='small'>
+                    <InputLabel>Секция</InputLabel>
+                    <Select label="Folder"
+                            value={folder}
+                            onChange={e => setFolder(e.target.value)}>
+                        {folderOptions.map(option =>
+                            <MenuItem key={`folderOption_${option.type}`}
+                                      value={JSON.stringify(option)}>
+                                {option.displayName}
+                            </MenuItem>)}
+                    </Select>
+                    <FormHelperText>Добавить секцию</FormHelperText>
+                </FormControl>
+
+                <AppButton onClick={addFolder}>Добавить</AppButton>
+            </div>);
+        }
+        return <div style={{fontSize: '24px', paddingTop: '10px'}}>
+            Выберите секцию
+        </div>;
+    }
+
     return (<div className={classes.container}>
-
-        <div className={classes.controls}>
-            <FormControl style={{flex: '0 0 50%'}} size='small'>
-                <InputLabel>Секция</InputLabel>
-                <Select label="Folder"
-                    value={folder}
-                    onChange={e => setFolder(e.target.value)}>
-                    {folderOptions.map(option =>
-                        <MenuItem key={`folderOption_${option.type}`}
-                            value={JSON.stringify(option)}>
-                            {option.displayName}
-                        </MenuItem>)}
-                </Select>
-                <FormHelperText>Добавить секцию</FormHelperText>
-            </FormControl>
-
-            <Button variant="contained" onClick={addFolder}>Добавить</Button>
-        </div>
+        {getControls()}
 
         <Snackbar
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

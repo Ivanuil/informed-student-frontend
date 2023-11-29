@@ -1,0 +1,57 @@
+@import 'src/styles/variables';
+
+.primaryButton {
+  :global {
+    .MuiButton-root {
+      height: 40px;
+      text-transform: none;
+      background-color: $primary--2;
+      color: $text--on--light--2;
+
+      &:hover {
+        background-color: $primary--hover--1;
+      }
+    }
+
+    .MuiButton-root.Mui-disabled {
+      pointer-events: none;
+      cursor: default;
+      color: rgba(35, 2, 2, 0.3);
+      box-shadow: none;
+      background-color: rgba(161, 15, 15, 0.20);
+    }
+  }
+}
+
+.secondaryButton {
+  :global {
+    .MuiButton-root {
+      height: 40px;
+      text-transform: none;
+      background-color: $secondary--1;
+      color: $text--on--dark--1;
+
+      &:hover {
+        background-color: $secondary--hover--1;
+      }
+    }
+
+    .MuiButton-root.Mui-disabled {
+      pointer-events: none;
+      cursor: default;
+      color: rgba(14, 14, 14, 0.3);
+      box-shadow: none;
+      background-color: rgba(15, 34, 161, 0.2);
+    }
+  }
+}
+
+.textButton {
+  :global {
+    .MuiButton-root {
+      height: 40px;
+      text-transform: none;
+      color: $text--on--light--2;
+    }
+  }
+}
