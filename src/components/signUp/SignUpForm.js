@@ -1,15 +1,16 @@
 import {Divider, IconButton, Snackbar, TextField} from '@mui/material';
 import classes from './SignUpForm.module.scss';
 import AppButton from '../ui/AppButton';
-import {NavLink, useNavigate, useOutletContext} from 'react-router-dom';
-import {useState} from 'react';
+import {NavLink, useNavigate} from 'react-router-dom';
+import {useContext, useState} from 'react';
 import axios from "../../services/axios";
 import CloseIcon from "@mui/icons-material/Close";
+import {AppContext} from '../../App';
 
 function SignUpForm() {
 
     const navigate = useNavigate();
-    const {setUser} = useOutletContext();
+    const {setUser} = useContext(AppContext);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -38,10 +39,10 @@ function SignUpForm() {
         setPassword(newValue);
 
         let errorMsg = '';
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=|{}.,[\]])(.){8,}$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(.){8,}$/;
         if (!passwordRegex.test(newValue)) {
             errorMsg = `Пароль должен быть более 8 символов, содержать латинские буквы 
-            верхнего и нижнего регистра, минимум одну цифру и спец. символ`;
+            верхнего и нижнего регистра и минимум одну цифру`;
         }
         setPasswordError(errorMsg);
     }

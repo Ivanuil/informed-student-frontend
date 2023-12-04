@@ -1,0 +1,16 @@
+@import 'src/styles/variables';
+
+.container .header {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    box-sizing: border-box;
+    background-color: $bg--light--2;
+    border-bottom: 1px solid $border--light--1;
+    
+    span {
+        font-size: 20px;
+    }
+}

@@ -1,14 +1,13 @@
 import {Autocomplete, Breadcrumbs, Divider, FormControl, InputLabel, MenuItem, Select, TextField} from '@mui/material';
 import classes from './MainPage.module.scss';
-import {Outlet, useNavigate, useOutletContext} from "react-router-dom";
+import {Outlet, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from '../../services/axios';
-import AppButton from '../ui/AppButton';
+import Layout from './layout/Layout';
 
 function MainPage() {
 
     const navigate = useNavigate();
-    const {setUser} = useOutletContext();
 
     const courseOptions = Array.from(Array(6), (e, i) => i + 1);
     const [subjects, setSubjects] = useState([]);
@@ -82,16 +81,7 @@ function MainPage() {
             </Breadcrumbs>;
     }
 
-    const signOut = () => {
-        axios.post('auth/logout')
-            .then(_response => {
-                setUser(null);
-                navigate('/login');
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
+
 
     const onSubjectAdded = (subject) => {
         setSubjects([...subjects, subject]);
@@ -101,16 +91,7 @@ function MainPage() {
         setFolders([...folders, folder]);
     }
 
-    return (<div className={classes.pageContainer}>
-        <header className={classes.header}>
-            <AppButton appVariant='text'
-                variant='text'
-                style={{ fontSize: '16px' }}
-                onClick={signOut}>
-                Выйти
-            </AppButton>
-        </header>
-
+    return (<Layout>
         <div className={classes.contentContainer}>
             <div className={classes.sidebarContainer}>
 
@@ -140,8 +121,7 @@ function MainPage() {
                         noOptionsText='Нет предметов'
                         onChange={(_event, newValue) => setSubject(newValue)}
                         renderInput={(params) =>
-                            <TextField {...params} variant='standard' label="Предмет" />}
-                    />
+                            <TextField {...params} variant='standard' label="Предмет" />} />
 
                     <FormControl variant='standard' size='small'>
                         <InputLabel>Секция</InputLabel>
@@ -168,7 +148,7 @@ function MainPage() {
                 <Outlet context={{ onSubjectAdded, onFolderAdded, folders }} />
             </div>
         </div>
-    </div>);
+    </Layout>);
 }
 
 export default MainPage;

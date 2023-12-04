@@ -5,10 +5,17 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import classes from './PostItem.module.scss';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import SendIcon from '@mui/icons-material/Send';
 import {styled} from '@mui/material/styles';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from '../../../services/axios';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import AppCheckbox from '../../ui/AppCheckbox';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import Tooltip from '@mui/material/Tooltip';
+import SendIcon from '@mui/icons-material/Send';
+
+const { Fragment } = React;
+
 
 const isImageExtension = (fileName) => {
     const dotIndex = fileName.lastIndexOf(".");
@@ -28,7 +35,7 @@ const Accordion = styled((props) => (
     },
     '&:before': {
         display: 'none',
-    },
+    }
 }));
 
 const AccordionSummary = styled((props) => (
@@ -46,11 +53,11 @@ const AccordionSummary = styled((props) => (
     '& .MuiAccordionSummary-content': {
         marginLeft: theme.spacing(1),
         margin: '0'
-    },
+    }
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-    padding: '8px 8px 0',
+    padding: '8px 8px 0'
 }));
 
 const DEFAULT_PAGE_SIZE = 5;
@@ -58,6 +65,7 @@ const DEFAULT_PAGE_SIZE = 5;
 function PostItem({post}) {
 
     const [commentText, setCommentText] = useState('');
+    const [isAnonymous, setIsAnonymous] = useState(false);
 
     const [comments, setComments] = useState([]);
     const [totalItems, setTotalItems] = useState(null);
@@ -101,7 +109,8 @@ function PostItem({post}) {
     const addNewComment = () => {
         const commentObject = {
             postId: post.id,
-            text: commentText
+            text: commentText,
+            isAnonymous
         };
         axios.post('comment', commentObject)
             .then(response => {
@@ -115,13 +124,24 @@ function PostItem({post}) {
     }
 
     const getAllCommentElements = () => {
+        const getCommenterUsername = (comment) => {
+            if (comment.user) {
+                return comment.user.username;
+            }
+            return (<div className={classes.anonymousUser}>
+                <span>Аноним</span>
+                <Tooltip title="Данный комментарий оставлен анонимно" placement="right">
+                    <HelpOutlineIcon style={{ width: '20px', height: '20px' }} />
+                </Tooltip>
+            </div>);
+        }
+        
         return comments.map(c => {
             const timestamp = new Date(c.createdAt);
-            const formattedTime = timestamp.toLocaleDateString() +
-                ' ' + timestamp.toLocaleTimeString(); 
+            const formattedTime = timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString(); 
 
             return <div className={classes.comment}>
-                <div style={{marginBottom: '6px'}}>{c.user.username}</div>
+                <div className={classes.commentUsername}>{getCommenterUsername(c)}</div>
                 
                 <div style={{marginLeft: '8px'}}>
                     <div>{c.text}</div>
@@ -195,11 +215,20 @@ function PostItem({post}) {
                             placeholder='Оставить комментарий'>
                         </textarea>
 
-                        <IconButton color="primary"
-                            disabled={!commentText}
-                            onClick={addNewComment}>
-                            <SendIcon />
-                        </IconButton>
+                        <div className={classes.controls}>
+                            <IconButton color="primary"
+                                disabled={!commentText}
+                                onClick={addNewComment}>
+                                <SendIcon />
+                            </IconButton>
+
+                            <FormControlLabel className={classes.anonymousCheckbox} 
+                                labelPlacement="start"
+                                control={<AppCheckbox 
+                                    onChange={e => setIsAnonymous(e.target.checked)} 
+                                    checked={isAnonymous} />} 
+                            label="Анонимно" />
+                        </div>
                     </div>
                 </div>
             </AccordionDetails>

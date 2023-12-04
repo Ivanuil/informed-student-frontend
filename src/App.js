@@ -11,10 +11,11 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('registering interceptor');
     const interceptor = axios.interceptors.response.use(function (response) {
       return response;
     }, function (error) {
-      if (error?.response?.status === 403) {
+      if (error.response?.status === 403) {
         setUser(null);
         navigate('/login');
       }
@@ -22,15 +23,21 @@ function App() {
     });
 
     axios.get('auth/user')
-        .then(response => setUser(response.data))
+        .then(response => {
+          setUser(response.data);
+          navigate('main');
+        })
         .catch(error => console.log(error));
 
-    return () => axios.interceptors.request.eject(interceptor);
+    return () => {
+      console.log('ejecting interceptor');
+      axios.interceptors.request.eject(interceptor);
+    }
   }, []);
   
   return (<div className='app'>
-    <AppContext.Provider value={user}>
-      <Outlet context={{setUser}}/>
+    <AppContext.Provider value={{user, setUser}}>
+      <Outlet />
     </AppContext.Provider>
   </div>);
 }

@@ -10,7 +10,7 @@ import {AppContext} from "../../App";
 
 function FolderPanel() {
 
-    const user = useContext(AppContext);
+    const {user} = useContext(AppContext);
 
     const { subjectId } = useParams();
 
@@ -65,7 +65,7 @@ function FolderPanel() {
     };
 
     const getControls = () => {
-        if (user && user.roles.indexOf('MODERATOR') !== -1) {
+        if (user?.roles && user.roles.indexOf('MODERATOR') !== -1) {
             return (<div className={classes.controls}>
                 <FormControl style={{flex: '0 0 50%'}} size='small'>
                     <InputLabel>Секция</InputLabel>

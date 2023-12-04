@@ -8,9 +8,9 @@ import SubjectPanel from "./components/subjectPanel/SubjectPanel";
 import FolderPanel from "./components/folderPanel/FolderPanel";
 import NotFound from "./components/errorPages/NotFound";
 import PostFeed from "./components/postFeed/PostFeed";
-import InitialPanel from "./components/sidebar/InitialPanel";
+import InitialPanel from "./components/mainPage/InitialPanel";
 import SignInForm from './components/signIn/SignInForm';
-import MainPage from './components/sidebar/MainPage';
+import MainPage from './components/mainPage/MainPage';
 import SignUpForm from './components/signUp/SignUpForm';
 import ProtectedRoute from './services/protectedRoute';
 

@@ -3,7 +3,7 @@
 .primaryButton {
   :global {
     .MuiButton-root {
-      height: 40px;
+      // height: 40px;
       text-transform: none;
       background-color: $primary--2;
       color: $text--on--light--2;
@@ -26,7 +26,7 @@
 .secondaryButton {
   :global {
     .MuiButton-root {
-      height: 40px;
+      // height: 40px;
       text-transform: none;
       background-color: $secondary--1;
       color: $text--on--dark--1;

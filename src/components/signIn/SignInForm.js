@@ -1,14 +1,15 @@
 import {Divider, IconButton, Snackbar, TextField} from '@mui/material';
 import classes from './SignInForm.module.scss';
 import AppButton from '../ui/AppButton';
-import {NavLink, useNavigate, useOutletContext} from 'react-router-dom';
-import {useState} from 'react';
+import {NavLink, useNavigate} from 'react-router-dom';
+import {useContext, useState} from 'react';
 import axios from '../../services/axios';
 import CloseIcon from "@mui/icons-material/Close";
+import {AppContext} from '../../App';
 
 function SignInForm() {
 
-    const {setUser} = useOutletContext();
+    const {setUser} = useContext(AppContext);
     const navigate = useNavigate();
 
     const [username, setUsername] = useState('');

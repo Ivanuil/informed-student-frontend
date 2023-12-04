@@ -1,16 +1,5 @@
 @import 'src/styles/variables';
 
-.pageContainer .header {
-    padding: 10px;
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    height: 52px;
-    box-sizing: border-box;
-    background-color: $bg--light--2;
-    border-bottom: 1px solid $border--light--1;
-}
-
 .contentContainer {
     display: flex;
     align-items: start;

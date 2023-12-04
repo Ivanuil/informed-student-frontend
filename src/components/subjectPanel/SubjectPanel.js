@@ -9,7 +9,7 @@ import {AppContext} from "../../App";
 
 function SubjectPanel() {
 
-    const user = useContext(AppContext);
+    const {user} = useContext(AppContext);
 
     const { course } = useParams();
 
@@ -45,7 +45,7 @@ function SubjectPanel() {
     };
 
     const getControls = () => {
-        if (user && user.roles.indexOf('MODERATOR') !== -1) {
+        if (user?.roles && user.roles.indexOf('MODERATOR') !== -1) {
             return (<div className={classes.controls}>
                 <TextField
                     style={{flex: '0 0 50%'}}
@@ -65,7 +65,7 @@ function SubjectPanel() {
             </div>);
         }
         return <div style={{fontSize: '24px', paddingTop: '10px'}}>
-            Выберите секцию
+            Выберите предмет
         </div>;
     }
 
