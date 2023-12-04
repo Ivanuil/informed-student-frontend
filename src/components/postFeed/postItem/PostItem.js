@@ -6,13 +6,15 @@ import classes from './PostItem.module.scss';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import {styled} from '@mui/material/styles';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from '../../../services/axios';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import AppCheckbox from '../../ui/AppCheckbox';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Tooltip from '@mui/material/Tooltip';
 import SendIcon from '@mui/icons-material/Send';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {AppContext} from '../../../App';
 
 const { Fragment } = React;
 
@@ -62,7 +64,9 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 const DEFAULT_PAGE_SIZE = 5;
 
-function PostItem({post}) {
+function PostItem({ post, onPostDeleted }) {
+
+    const {user} = useContext(AppContext);
 
     const [commentText, setCommentText] = useState('');
     const [isAnonymous, setIsAnonymous] = useState(false);
@@ -96,10 +100,10 @@ function PostItem({post}) {
 
     const getAttachedFile = () => {
         if (!post.files || !post.files.length) return null;
-        
+
         const fileObj = post.files[0];
         const fileUrl = `${process.env.REACT_APP_BASEURL}/files?filename=${fileObj.savedByName}`;
-        
+
         if (isImageExtension(fileObj.originalName)) {
             return <img width={'100%'} src={fileUrl} alt='Attached image'></img>;
         }
@@ -123,6 +127,27 @@ function PostItem({post}) {
             });
     }
 
+    const deleteComment = (comment) => {
+        axios.delete(`comment/${comment.id}`)
+            .then(_response => {
+                setComments(comments.filter(c => c.id !== comment.id));
+                setTotalItems(prevSize => prevSize - 1);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    const deletePost = () => {
+        axios.delete(`post/${post.id}`)
+            .then(_response => {
+                onPostDeleted(post);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     const getAllCommentElements = () => {
         const getCommenterUsername = (comment) => {
             if (comment.user) {
@@ -135,30 +160,48 @@ function PostItem({post}) {
                 </Tooltip>
             </div>);
         }
-        
+
+        const getCommentActions = (comment) => {
+            if (user.roles && user.roles.indexOf('MODERATOR') !== -1) {
+                return (<div className={classes.actions}>
+                    <Tooltip placement="top" title="Удалить комментарий">
+                        <IconButton style={{ padding: '0' }}
+                            onClick={e => deleteComment(comment)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                </div>);
+            }
+            return null;
+        }
+
         return comments.map(c => {
             const timestamp = new Date(c.createdAt);
-            const formattedTime = timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString(); 
+            const formattedTime = timestamp.toLocaleDateString() + ' ' + timestamp.toLocaleTimeString();
 
             return <div className={classes.comment}>
-                <div className={classes.commentUsername}>{getCommenterUsername(c)}</div>
-                
-                <div style={{marginLeft: '8px'}}>
+                <div className={classes.usernameAndActions}>
+                    <span style={{flexGrow: '1'}}>{getCommenterUsername(c)}</span>
+
+                    {getCommentActions(c)}
+                </div>
+
+                <div style={{ marginLeft: '8px' }}>
                     <div>{c.text}</div>
                     <div className={classes.createdAt}>
                         {formattedTime}
                     </div>
                 </div>
-                <Divider style={{marginTop: '4px'}}/>
+                <Divider style={{ marginTop: '4px' }} />
             </div>
         });
     }
 
     const getOldCommentsWithoutIntersecting = (newPage) => {
-        const commentsCopy = [...comments];
+        const commentsCopy = comments.slice();
         newPage.forEach(el => {
             const indexInOldArray = commentsCopy.findIndex(c => c.id === el.id);
-            if (indexInOldArray && indexInOldArray > 0) {
+            if (indexInOldArray !== -1) {
                 commentsCopy.splice(indexInOldArray, 1);
             }
         });
@@ -184,18 +227,35 @@ function PostItem({post}) {
         return null;
     }
 
-    return (<div key={`post${post.id}`} className={classes.container}>
+    const getPostActions = () => {
+        if (user.roles && user.roles.indexOf('MODERATOR') !== -1) {
+            return (<div className={classes.actions}>
+                <Tooltip placement="top" title="Удалить пост">
+                    <IconButton style={{ padding: '0' }}
+                        onClick={deletePost}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            </div>);
+        }
+        return null;
+    }
 
-        <div className={classes.username} style={{ marginBottom: '8px' }}>
-            {post.user.username}
+    return (<div key={`post${post.id}`} className={classes.container}>
+        <div className={classes.mainContent}>
+            <div className={classes.postUsernameAndActions}>
+                <span>{post.user.username}</span>
+
+                {getPostActions()}
+            </div>
+            <div className={classes.text} style={{ marginBottom: '10px' }}>
+                {post.text}
+            </div>
+            {getAttachedFile()}
         </div>
-        <div className={classes.text} style={{marginBottom: '10px'}}>
-            {post.text}
-        </div>
-        {getAttachedFile()}
 
         <Divider style={{ marginTop: '10px', marginBottom: '10px' }} />
-        <Accordion 
+        <Accordion
             expanded={commentsExpanded}
             onChange={(_e, isExpanded) => setCommentsExpanded(isExpanded)}>
             <AccordionSummary
@@ -222,12 +282,12 @@ function PostItem({post}) {
                                 <SendIcon />
                             </IconButton>
 
-                            <FormControlLabel className={classes.anonymousCheckbox} 
+                            <FormControlLabel className={classes.anonymousCheckbox}
                                 labelPlacement="start"
-                                control={<AppCheckbox 
-                                    onChange={e => setIsAnonymous(e.target.checked)} 
-                                    checked={isAnonymous} />} 
-                            label="Анонимно" />
+                                control={<AppCheckbox
+                                    onChange={e => setIsAnonymous(e.target.checked)}
+                                    checked={isAnonymous} />}
+                                label="Анонимно" />
                         </div>
                     </div>
                 </div>

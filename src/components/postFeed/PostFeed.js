@@ -49,7 +49,6 @@ function PostFeed() {
                 const pagedResult = response.data;
                 setPosts(pagedResult.content);
                 setNumberOfPages(pagedResult.totalPages);
-                console.log(response.data);
             })
             .catch(error => {
                 console.log(error);
@@ -124,6 +123,14 @@ function PostFeed() {
         </div>);
     }
 
+    const onPostDeleted = () => {
+        if (posts.length === 1 && currentPage !== 1) {
+            setCurrentPage(prevPage => prevPage - 1);
+        } else {
+            getPageOfPosts();
+        }
+    }
+
     return (<div className={classes.container}>
         
         <div className={classes.posts}>
@@ -157,7 +164,8 @@ function PostFeed() {
                     </div>
                 </div>
             </div>
-            {posts && posts.map(p => <PostItem post={p} />)}
+            {posts && posts.map(p => <PostItem post={p}
+                onPostDeleted={onPostDeleted} />)}
         </div>
         {
             numberOfPages > 0 &&

@@ -11,6 +11,12 @@ $username-text: #696969;
     border: 1px solid $border--light--1;
 
     word-break: break-all;
+
+    .mainContent:hover {
+        .postUsernameAndActions .actions {
+            opacity: 1;
+        }
+    }
 }
 
 .container .text {
@@ -18,10 +24,19 @@ $username-text: #696969;
     font-size: 18px;
 }
 
-.container .username {
+.container .postUsernameAndActions {
     color: $text--on--light--3;
     font-size: 16px;
+    margin-bottom: 8px;
     color: $username-text;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .actions {
+        opacity: 0;
+        transition: opacity ease-in-out .3s;
+    }
 }
 
 .container .commentsLabel {
@@ -95,8 +110,22 @@ $username-text: #696969;
         color: rgb(117, 117, 117);
     }
 
-    .commentUsername {
-        margin-bottom: 6px;
+    .usernameAndActions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .usernameAndActions .actions {
+        opacity: 0;
+        transition: opacity ease-in-out .3s;
+    }
+
+    &:hover {
+        .usernameAndActions .actions {
+            opacity: 1;
+        }
     }
 }
 
