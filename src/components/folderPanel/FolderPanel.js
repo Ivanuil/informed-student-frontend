@@ -1,16 +1,15 @@
 import classes from './FolderPanel.module.scss';
-import {FormControl, IconButton, InputLabel, MenuItem, Select, Snackbar} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import FormHelperText from '@mui/material/FormHelperText';
 import {useContext, useEffect, useState} from "react";
 import axios from '../../services/axios';
-import CloseIcon from '@mui/icons-material/Close';
 import {useOutletContext, useParams} from 'react-router-dom';
 import AppButton from '../ui/AppButton';
 import {AppContext} from "../../App";
 
 function FolderPanel() {
 
-    const {user} = useContext(AppContext);
+    const {user, setSnackbarState} = useContext(AppContext);
 
     const { subjectId } = useParams();
 
@@ -18,9 +17,6 @@ function FolderPanel() {
 
     const [folderOptions, setFolderOptions] = useState([]);
     const [folder, setFolder] = useState('');
-
-    const [message, setMessage] = useState('');
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     useEffect(() => {
         axios.get('folder/types')
@@ -35,8 +31,7 @@ function FolderPanel() {
     const addFolder = () => {
         const typeToAdd = JSON.parse(folder).type;
         if (folders && folders.some(f => f.type.type === typeToAdd)) {
-            setMessage("Такая секция уже существует");
-            setSnackbarOpen(true);
+            setSnackbarState({open: true, message: 'Такая секция уже существует'});
             return;
         }
 
@@ -49,20 +44,12 @@ function FolderPanel() {
             .then(response => {
                 onFolderAdded(response.data);
                 setFolder('');
-                setMessage("Секция добавлена");
-                setSnackbarOpen(true);
+                setSnackbarState({open: true, message: 'Секция добавлена'});
             })
             .catch(error => {
                 console.log(error);
             });
     }
-
-    const handleSnackbarClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackbarOpen(false);
-    };
 
     const getControls = () => {
         if (user?.roles && user.roles.indexOf('MODERATOR') !== -1) {
@@ -91,21 +78,6 @@ function FolderPanel() {
 
     return (<div className={classes.container}>
         {getControls()}
-
-        <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbarOpen}
-            autoHideDuration={4000}
-            message={message}
-            onClose={handleSnackbarClose}
-            action={<IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleSnackbarClose}>
-                <CloseIcon fontSize="small"/>
-            </IconButton>}>
-        </Snackbar>
     </div>);
 }
 

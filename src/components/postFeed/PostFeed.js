@@ -1,13 +1,13 @@
-import {Divider, IconButton, Pagination, Snackbar} from '@mui/material';
+import {Divider, IconButton, Pagination} from '@mui/material';
 import classes from './PostFeed.module.scss';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import CloseIcon from '@mui/icons-material/Close';
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import styled from '@emotion/styled';
 import axios from '../../services/axios';
 import {useParams} from 'react-router-dom';
 import PostItem from './postItem/PostItem';
 import AppButton from '../ui/AppButton';
+import {AppContext} from '../../App';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -27,6 +27,8 @@ const MAX_FILE_UPLOAD_SIZE = 5;
 
 function PostFeed() {
 
+    const {setSnackbarState} = useContext(AppContext);
+
     const { folderId } = useParams();
 
     const [postText, setPostText] = useState('');
@@ -34,7 +36,6 @@ function PostFeed() {
     const [attachedFile, setAttachedFile] = useState(null);
 
     const [posts, setPosts] = useState([]);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [numberOfPages, setNumberOfPages] = useState(null);
 
@@ -83,22 +84,15 @@ function PostFeed() {
             }
         })
             .then(_response => {
-                setSnackbarOpen(true);
                 setPostText('');
                 setAttachedFile(null);
                 getPageOfPosts();
+                setSnackbarState({open: true, message: 'Пост успешно добавлен'});
             })
             .catch(error => {
                 console.log(error);
             });
     }
-
-    const handleSnackbarClose = (_event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackbarOpen(false);
-    };
 
     const handlePageChange = (_event, value) => {
         setCurrentPage(value);
@@ -176,21 +170,6 @@ function PostFeed() {
                     size="large" />
             </div>
         }
-
-        <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbarOpen}
-            autoHideDuration={4000}
-            message="Пост добавлен"
-            onClose={handleSnackbarClose}
-            action={<IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleSnackbarClose}>
-                <CloseIcon fontSize="small" />
-            </IconButton>}>
-        </Snackbar>
     </div>);
 }
 

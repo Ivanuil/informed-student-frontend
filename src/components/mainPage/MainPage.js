@@ -3,7 +3,6 @@ import classes from './MainPage.module.scss';
 import {Outlet, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from '../../services/axios';
-import Layout from './layout/Layout';
 
 function MainPage() {
 
@@ -81,8 +80,6 @@ function MainPage() {
             </Breadcrumbs>;
     }
 
-
-
     const onSubjectAdded = (subject) => {
         setSubjects([...subjects, subject]);
     }
@@ -91,64 +88,62 @@ function MainPage() {
         setFolders([...folders, folder]);
     }
 
-    return (<Layout>
-        <div className={classes.contentContainer}>
-            <div className={classes.sidebarContainer}>
+    return (<div className={classes.contentContainer}>
+        <div className={classes.sidebarContainer}>
 
-                <h3 className={classes.header}>Фильтры</h3>
-                <Divider className={classes.divider} />
+            <h3 className={classes.header}>Фильтры</h3>
+            <Divider className={classes.divider} />
 
-                <div className={classes.controls}>
-                    <FormControl variant='standard' size='small'>
-                        <InputLabel>Курс</InputLabel>
-                        <Select label="Course"
-                            value={course}
-                            onChange={e => setCourse(e.target.value)}>
-                            {courseOptions.map(o =>
-                                <MenuItem key={`course_${o}`}
-                                    value={o}>{o}</MenuItem>)}
-                        </Select>
-                    </FormControl>
+            <div className={classes.controls}>
+                <FormControl variant='standard' size='small'>
+                    <InputLabel>Курс</InputLabel>
+                    <Select label="Course"
+                        value={course}
+                        onChange={e => setCourse(e.target.value)}>
+                        {courseOptions.map(o =>
+                            <MenuItem key={`course_${o}`}
+                                value={o}>{o}</MenuItem>)}
+                    </Select>
+                </FormControl>
 
-                    <Autocomplete
-                        size='small'
-                        options={subjects}
-                        blurOnSelect
-                        disableClearable
-                        value={subject}
-                        disabled={!course}
-                        getOptionLabel={option => option.name ?? option}
-                        noOptionsText='Нет предметов'
-                        onChange={(_event, newValue) => setSubject(newValue)}
-                        renderInput={(params) =>
-                            <TextField {...params} variant='standard' label="Предмет" />} />
+                <Autocomplete
+                    size='small'
+                    options={subjects}
+                    blurOnSelect
+                    disableClearable
+                    value={subject}
+                    disabled={!course}
+                    getOptionLabel={option => option.name ?? option}
+                    noOptionsText='Нет предметов'
+                    onChange={(_event, newValue) => setSubject(newValue)}
+                    renderInput={(params) =>
+                        <TextField {...params} variant='standard' label="Предмет" />} />
 
-                    <FormControl variant='standard' size='small'>
-                        <InputLabel>Секция</InputLabel>
-                        <Select label="Folder"
-                            disabled={!subject}
-                            value={folder}
-                            onChange={e => setFolder(e.target.value)}>
+                <FormControl variant='standard' size='small'>
+                    <InputLabel>Секция</InputLabel>
+                    <Select label="Folder"
+                        disabled={!subject}
+                        value={folder}
+                        onChange={e => setFolder(e.target.value)}>
 
-                            {
-                                folders.length > 0 ? folders.map(f =>
-                                    <MenuItem key={`actualFolder_${f.type.type}`}
-                                        value={JSON.stringify(f)}>{f.type.displayName}</MenuItem>) :
-                                    <div className={classes.noOptions}>Нет секций</div>
-                            }
-                        </Select>
-                    </FormControl>
-                </div>
-            </div>
-
-            <div className={classes.verticalDivider} />
-
-            <div className={classes.mainContentContainer}>
-                {getNavigationInfo()}
-                <Outlet context={{ onSubjectAdded, onFolderAdded, folders }} />
+                        {
+                            folders.length > 0 ? folders.map(f =>
+                                <MenuItem key={`actualFolder_${f.type.type}`}
+                                    value={JSON.stringify(f)}>{f.type.displayName}</MenuItem>) :
+                                <div className={classes.noOptions}>Нет секций</div>
+                        }
+                    </Select>
+                </FormControl>
             </div>
         </div>
-    </Layout>);
+
+        <div className={classes.verticalDivider} />
+
+        <div className={classes.mainContentContainer}>
+            {getNavigationInfo()}
+            <Outlet context={{ onSubjectAdded, onFolderAdded, folders }} />
+        </div>
+    </div>);
 }
 
 export default MainPage;

@@ -1,20 +1,18 @@
 import classes from './SubjectPanel.module.scss';
-import {IconButton, Snackbar, TextField} from "@mui/material";
+import {TextField} from "@mui/material";
 import {useOutletContext, useParams} from "react-router-dom";
 import {useContext, useState} from "react";
-import CloseIcon from '@mui/icons-material/Close';
 import axios from '../../services/axios';
 import AppButton from '../ui/AppButton';
 import {AppContext} from "../../App";
 
 function SubjectPanel() {
 
-    const {user} = useContext(AppContext);
+    const {user, setSnackbarState} = useContext(AppContext);
 
     const { course } = useParams();
 
     const [subjectName, setSubjectName] = useState('');
-    const [snackbarState, setSnackbarState] = useState({});
 
     const {onSubjectAdded} = useOutletContext();
 
@@ -36,13 +34,6 @@ function SubjectPanel() {
                 }
             });
     }
-
-    const handleSnackbarClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackbarState({open: false});
-    };
 
     const getControls = () => {
         if (user?.roles && user.roles.indexOf('MODERATOR') !== -1) {
@@ -70,24 +61,7 @@ function SubjectPanel() {
     }
 
     return (<div className={classes.container}>
-
         {getControls()}
-
-        <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbarState.open}
-            autoHideDuration={4000}
-            message={snackbarState.message}
-            onClose={handleSnackbarClose}
-            action={<IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleSnackbarClose}>
-                <CloseIcon fontSize="small"/>
-            </IconButton>}>
-        </Snackbar>
-
     </div>);
 }
 

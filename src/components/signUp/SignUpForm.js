@@ -1,16 +1,15 @@
-import {Divider, IconButton, Snackbar, TextField} from '@mui/material';
+import {Divider, TextField} from '@mui/material';
 import classes from './SignUpForm.module.scss';
 import AppButton from '../ui/AppButton';
 import {NavLink, useNavigate} from 'react-router-dom';
 import {useContext, useState} from 'react';
 import axios from "../../services/axios";
-import CloseIcon from "@mui/icons-material/Close";
 import {AppContext} from '../../App';
 
 function SignUpForm() {
 
     const navigate = useNavigate();
-    const {setUser} = useContext(AppContext);
+    const {setUser, setSnackbarState} = useContext(AppContext);
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -20,8 +19,6 @@ function SignUpForm() {
     const [usernameError, setUsernameError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-
-    const [snackbarState, setSnackbarState] = useState({});
 
     const onUsernameChange = (e) => {
         const newValue = e.target.value;
@@ -84,13 +81,6 @@ function SignUpForm() {
             });
     }
 
-    const handleSnackbarClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setSnackbarState({open: false});
-    };
-
     return (<div className={classes.container}>
 
         <div className={classes.card}>
@@ -142,21 +132,6 @@ function SignUpForm() {
                 Уже есть аккаунт?
             </NavLink>
         </div>
-
-        <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbarState.open}
-            autoHideDuration={4000}
-            message={snackbarState.message}
-            onClose={handleSnackbarClose}
-            action={<IconButton
-                size="small"
-                aria-label="close"
-                color="inherit"
-                onClick={handleSnackbarClose}>
-                <CloseIcon fontSize="small"/>
-            </IconButton>}>
-        </Snackbar>
     </div>);
 }
 

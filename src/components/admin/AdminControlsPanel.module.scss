@@ -1,0 +1,41 @@
+@import 'src/styles/variables';
+
+.container {
+  width: 50%;
+  margin: 30px auto 0;
+}
+
+.container .card {
+  background-color: white;
+  border-radius: $border--radius--1;
+  box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px, rgba(0, 0, 0, 0.24) 0 1px 2px;
+  display: flex;
+
+  :global {
+    .MuiTab-root {
+      text-transform: none;
+      color: $text--on--light--2;
+    }
+  }
+}
+
+.card .tabContent {
+  flex-grow: 1;
+  padding: 16px;
+}
+
+.tabContent .controls {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+
+  .input {
+    width: 60%;
+    max-width: 300px;
+    min-width: 170px;
+  }
+}
+
+.controls .sectionHeader {
+  font-size: 22px;
+}

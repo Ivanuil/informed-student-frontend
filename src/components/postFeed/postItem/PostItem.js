@@ -15,6 +15,7 @@ import Tooltip from '@mui/material/Tooltip';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {AppContext} from '../../../App';
+import {Link} from "react-router-dom";
 
 const { Fragment } = React;
 
@@ -244,7 +245,9 @@ function PostItem({ post, onPostDeleted }) {
     return (<div key={`post${post.id}`} className={classes.container}>
         <div className={classes.mainContent}>
             <div className={classes.postUsernameAndActions}>
-                <span>{post.user.username}</span>
+                <Link to={`/users/${post.user.username}`}>
+                    {post.user.username}
+                </Link>
 
                 {getPostActions()}
             </div>

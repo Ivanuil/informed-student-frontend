@@ -25,7 +25,6 @@ $username-text: #696969;
 }
 
 .container .postUsernameAndActions {
-    color: $text--on--light--3;
     font-size: 16px;
     margin-bottom: 8px;
     color: $username-text;
@@ -36,6 +35,19 @@ $username-text: #696969;
     .actions {
         opacity: 0;
         transition: opacity ease-in-out .3s;
+    }
+
+    a {
+        color: inherit;
+        cursor: pointer;
+        text-decoration: none;
+
+        &:active {
+            color: black;
+        }
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
